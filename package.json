@@ -1,0 +1,24 @@
+{
+  "name": "little-light-micropore",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "tsc -p tsconfig.json && vite build && node scripts/copyDemo.mjs",
+    "preview": "vite preview --host 0.0.0.0",
+    "validate:routes": "node scripts/validateRoutes.mjs"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^5.0.4",
+    "lucide-react": "^0.468.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.12"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3"
+  }
+}

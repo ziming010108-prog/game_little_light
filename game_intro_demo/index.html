@@ -1,0 +1,1436 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>微孔：疫苗坠落 游戏介绍 Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans+SC:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@600;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ===========================================
+         CSS CUSTOM PROPERTIES
+         =========================================== */
+      :root {
+        color-scheme: dark;
+        --bg-primary: #07100f;
+        --bg-secondary: #101918;
+        --bg-panel: rgba(12, 22, 20, 0.76);
+        --text-primary: #e7f2ec;
+        --text-secondary: #9fb3ad;
+        --muted: #6f827d;
+        --green: #93d8a3;
+        --red: #d85f52;
+        --cyan: #76d6d8;
+        --amber: #d7a35d;
+        --line: rgba(231, 242, 236, 0.16);
+        --line-strong: rgba(147, 216, 163, 0.42);
+        --font-display: "Noto Serif SC", serif;
+        --font-body: "IBM Plex Sans SC", sans-serif;
+        --font-mono: "IBM Plex Mono", monospace;
+        --title-size: clamp(2rem, 6vw, 5.2rem);
+        --h2-size: clamp(1.5rem, 4vw, 3.4rem);
+        --h3-size: clamp(1rem, 2vw, 1.35rem);
+        --body-size: clamp(0.78rem, 1.35vw, 1.12rem);
+        --small-size: clamp(0.68rem, 1vw, 0.9rem);
+        --slide-padding: clamp(1rem, 4vw, 4rem);
+        --content-gap: clamp(0.75rem, 2vw, 1.8rem);
+        --element-gap: clamp(0.4rem, 1vw, 0.9rem);
+        --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+        --duration-normal: 0.72s;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      /* ===========================================
+         VIEWPORT FITTING: MANDATORY BASE STYLES
+         =========================================== */
+      html,
+      body {
+        height: 100%;
+        overflow-x: hidden;
+      }
+
+      html {
+        scroll-snap-type: y mandatory;
+        scroll-behavior: smooth;
+      }
+
+      .slide {
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+        overflow: hidden;
+        scroll-snap-align: start;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
+
+      .slide-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        max-height: 100%;
+        overflow: hidden;
+        padding: var(--slide-padding);
+      }
+
+      .card,
+      .container,
+      .content-box {
+        max-width: min(90vw, 1000px);
+        max-height: min(80vh, 700px);
+      }
+
+      .feature-list,
+      .bullet-list {
+        gap: clamp(0.4rem, 1vh, 1rem);
+      }
+
+      .feature-list li,
+      .bullet-list li {
+        font-size: var(--body-size);
+        line-height: 1.4;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+        gap: clamp(0.5rem, 1.5vw, 1rem);
+      }
+
+      img,
+      .image-container {
+        max-width: 100%;
+        max-height: min(50vh, 400px);
+        object-fit: contain;
+      }
+
+      @media (max-height: 700px) {
+        :root {
+          --slide-padding: clamp(0.75rem, 3vw, 2rem);
+          --content-gap: clamp(0.4rem, 1.5vw, 1rem);
+          --title-size: clamp(1.25rem, 4.5vw, 2.5rem);
+          --h2-size: clamp(1rem, 3vw, 1.75rem);
+        }
+      }
+
+      @media (max-height: 600px) {
+        :root {
+          --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem);
+          --content-gap: clamp(0.3rem, 1vw, 0.75rem);
+          --title-size: clamp(1.1rem, 4vw, 2rem);
+          --body-size: clamp(0.7rem, 1.2vw, 0.95rem);
+        }
+
+        .nav-dots,
+        .keyboard-hint,
+        .decorative {
+          display: none;
+        }
+      }
+
+      @media (max-height: 500px) {
+        :root {
+          --slide-padding: clamp(0.4rem, 2vw, 1rem);
+          --title-size: clamp(1rem, 3.5vw, 1.5rem);
+          --h2-size: clamp(0.9rem, 2.5vw, 1.25rem);
+          --body-size: clamp(0.65rem, 1vw, 0.85rem);
+        }
+      }
+
+      @media (max-width: 600px) {
+        :root {
+          --title-size: clamp(1.25rem, 7vw, 2.5rem);
+        }
+
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.2s !important;
+        }
+
+        html {
+          scroll-behavior: auto;
+        }
+      }
+
+      /* ===========================================
+         BASE THEME
+         =========================================== */
+      body {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        font-family: var(--font-body);
+        font-weight: 350;
+      }
+
+      button {
+        font: inherit;
+      }
+
+      .slide {
+        background:
+          radial-gradient(circle at 18% 18%, rgba(118, 214, 216, 0.12), rgba(118, 214, 216, 0) 26%),
+          radial-gradient(circle at 82% 70%, rgba(147, 216, 163, 0.11), rgba(147, 216, 163, 0) 30%),
+          linear-gradient(135deg, #07100f 0%, #0c1514 44%, #121211 100%);
+        isolation: isolate;
+      }
+
+      .slide::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -2;
+        background-image:
+          linear-gradient(rgba(231, 242, 236, 0.045) 1px, rgba(231, 242, 236, 0) 1px),
+          linear-gradient(90deg, rgba(231, 242, 236, 0.035) 1px, rgba(231, 242, 236, 0) 1px);
+        background-size: 56px 56px;
+        mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.18));
+      }
+
+      .slide::after {
+        content: "";
+        pointer-events: none;
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        opacity: 0.22;
+        background:
+          repeating-linear-gradient(
+            0deg,
+            rgba(255, 255, 255, 0.06) 0,
+            rgba(255, 255, 255, 0.06) 1px,
+            rgba(255, 255, 255, 0) 1px,
+            rgba(255, 255, 255, 0) 5px
+          );
+        mix-blend-mode: screen;
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-family: var(--font-display);
+        letter-spacing: 0.01em;
+      }
+
+      h1 {
+        font-size: var(--title-size);
+        line-height: 0.98;
+        font-weight: 900;
+      }
+
+      h2 {
+        font-size: var(--h2-size);
+        line-height: 1.05;
+        font-weight: 800;
+      }
+
+      h3 {
+        font-size: var(--h3-size);
+        line-height: 1.2;
+      }
+
+      p {
+        font-size: var(--body-size);
+        line-height: 1.75;
+        color: var(--text-secondary);
+      }
+
+      strong {
+        color: var(--text-primary);
+        font-weight: 700;
+      }
+
+      .mono {
+        font-family: var(--font-mono);
+        font-variant-numeric: tabular-nums;
+      }
+
+      .eyebrow {
+        font-family: var(--font-mono);
+        font-size: var(--small-size);
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--green);
+      }
+
+      .progress-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 100;
+        width: 0%;
+        height: 3px;
+        background: linear-gradient(90deg, var(--green), var(--cyan), var(--amber));
+        box-shadow: 0 0 18px rgba(147, 216, 163, 0.45);
+      }
+
+      .nav-dots {
+        position: fixed;
+        z-index: 99;
+        top: 50%;
+        right: clamp(0.5rem, 1.4vw, 1.5rem);
+        display: grid;
+        gap: 9px;
+        transform: translateY(-50%);
+      }
+
+      .nav-dots button {
+        width: 9px;
+        height: 9px;
+        border: 1px solid rgba(231, 242, 236, 0.4);
+        background: rgba(231, 242, 236, 0.12);
+        cursor: pointer;
+      }
+
+      .nav-dots button.active {
+        height: 26px;
+        background: var(--green);
+        border-color: var(--green);
+      }
+
+      .keyboard-hint {
+        position: fixed;
+        right: clamp(1rem, 2vw, 2rem);
+        bottom: clamp(1rem, 2vw, 2rem);
+        z-index: 90;
+        padding: 8px 10px;
+        border: 1px solid rgba(231, 242, 236, 0.14);
+        color: rgba(231, 242, 236, 0.58);
+        background: rgba(7, 16, 15, 0.7);
+        font-family: var(--font-mono);
+        font-size: clamp(0.62rem, 0.9vw, 0.78rem);
+      }
+
+      .reveal,
+      .reveal-left,
+      .reveal-scale,
+      .reveal-blur {
+        opacity: 0;
+        transition:
+          opacity var(--duration-normal) var(--ease-out-expo),
+          transform var(--duration-normal) var(--ease-out-expo),
+          filter var(--duration-normal) var(--ease-out-expo);
+      }
+
+      .reveal {
+        transform: translateY(28px);
+      }
+
+      .reveal-left {
+        transform: translateX(-42px);
+      }
+
+      .reveal-scale {
+        transform: scale(0.94);
+      }
+
+      .reveal-blur {
+        filter: blur(10px);
+      }
+
+      .slide.visible .reveal,
+      .slide.visible .reveal-left,
+      .slide.visible .reveal-scale,
+      .slide.visible .reveal-blur {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+        filter: blur(0);
+      }
+
+      .delay-1 {
+        transition-delay: 0.12s;
+      }
+
+      .delay-2 {
+        transition-delay: 0.24s;
+      }
+
+      .delay-3 {
+        transition-delay: 0.36s;
+      }
+
+      .delay-4 {
+        transition-delay: 0.48s;
+      }
+
+      .delay-5 {
+        transition-delay: 0.6s;
+      }
+
+      /* ===========================================
+         SHARED COMPONENTS
+         =========================================== */
+      .two-col {
+        display: grid;
+        grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.95fr);
+        gap: clamp(1rem, 4vw, 4rem);
+        align-items: center;
+        min-height: 0;
+      }
+
+      .split-tight {
+        display: grid;
+        grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+        gap: clamp(0.8rem, 2.4vw, 2.2rem);
+        align-items: center;
+      }
+
+      .hero-copy,
+      .section-copy {
+        display: grid;
+        gap: var(--content-gap);
+      }
+
+      .lead {
+        max-width: 760px;
+        color: #c8d9d2;
+        font-size: clamp(0.9rem, 1.65vw, 1.35rem);
+      }
+
+      .panel {
+        border: 1px solid var(--line);
+        background: linear-gradient(180deg, rgba(16, 25, 24, 0.88), rgba(8, 14, 13, 0.72));
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+        backdrop-filter: blur(12px);
+      }
+
+      .stat-row {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: clamp(0.5rem, 1vw, 0.9rem);
+      }
+
+      .stat {
+        min-height: clamp(76px, 12vh, 120px);
+        padding: clamp(0.75rem, 1.6vw, 1.3rem);
+        border: 1px solid rgba(231, 242, 236, 0.14);
+        background: rgba(231, 242, 236, 0.045);
+        display: grid;
+        align-content: end;
+        gap: 0.1rem;
+      }
+
+      .stat b {
+        color: var(--text-primary);
+        font-family: var(--font-mono);
+        font-size: clamp(1.4rem, 3.7vw, 3.4rem);
+        line-height: 0.95;
+      }
+
+      .stat span {
+        color: var(--text-secondary);
+        font-size: var(--small-size);
+      }
+
+      .tag-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.55rem;
+      }
+
+      .tag {
+        min-height: 34px;
+        display: inline-flex;
+        align-items: center;
+        padding: 0 0.75rem;
+        border: 1px solid rgba(147, 216, 163, 0.28);
+        background: rgba(147, 216, 163, 0.08);
+        color: #d8f2df;
+        font-size: var(--small-size);
+        font-weight: 600;
+      }
+
+      .image-stack {
+        position: relative;
+        min-height: min(54vh, 520px);
+      }
+
+      .image-stack img {
+        position: absolute;
+        object-fit: cover;
+        border: 1px solid rgba(231, 242, 236, 0.16);
+        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.5);
+      }
+
+      .image-stack .main-img {
+        inset: 7% 3% 5% 8%;
+        width: 82%;
+        height: 74%;
+        max-height: none;
+      }
+
+      .image-stack .side-img {
+        right: 0;
+        bottom: 0;
+        width: 42%;
+        height: 42%;
+        max-height: none;
+      }
+
+      .image-stack .top-img {
+        left: 0;
+        top: 0;
+        width: 35%;
+        height: 34%;
+        max-height: none;
+      }
+
+      .caption-ribbon {
+        position: absolute;
+        left: 10%;
+        bottom: 9%;
+        max-width: 70%;
+        padding: 0.85rem 1rem;
+        border: 1px solid rgba(215, 163, 93, 0.32);
+        background: rgba(10, 14, 13, 0.82);
+        color: #f3dfc0;
+        font-size: var(--small-size);
+        line-height: 1.5;
+      }
+
+      .route-line {
+        display: grid;
+        gap: clamp(0.5rem, 1.1vw, 0.9rem);
+      }
+
+      .route-step {
+        display: grid;
+        grid-template-columns: clamp(70px, 8vw, 96px) minmax(0, 1fr);
+        align-items: center;
+        gap: 0.8rem;
+      }
+
+      .route-step .node {
+        min-height: 42px;
+        display: grid;
+        place-items: center;
+        border: 1px solid var(--line-strong);
+        background: rgba(147, 216, 163, 0.1);
+        color: #e7f7ea;
+        font-family: var(--font-mono);
+        font-size: var(--small-size);
+        font-weight: 700;
+      }
+
+      .route-step p {
+        font-size: clamp(0.74rem, 1.12vw, 1rem);
+        line-height: 1.45;
+      }
+
+      .story-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: clamp(0.65rem, 1.5vw, 1rem);
+      }
+
+      .story-card,
+      .feature-card,
+      .ending-card {
+        border: 1px solid var(--line);
+        background: rgba(231, 242, 236, 0.045);
+        padding: clamp(0.75rem, 1.5vw, 1.15rem);
+      }
+
+      .story-card {
+        min-height: min(42vh, 380px);
+        display: grid;
+        align-content: space-between;
+        gap: 1rem;
+      }
+
+      .story-card h3,
+      .feature-card h3,
+      .ending-card h3 {
+        color: var(--text-primary);
+      }
+
+      .story-card p,
+      .feature-card p,
+      .ending-card p {
+        font-size: clamp(0.72rem, 1vw, 0.95rem);
+        line-height: 1.6;
+      }
+
+      .story-card ul,
+      .feature-card ul {
+        list-style: none;
+        display: grid;
+        gap: 0.42rem;
+      }
+
+      .story-card li,
+      .feature-card li {
+        color: var(--text-secondary);
+        font-size: clamp(0.7rem, 0.95vw, 0.92rem);
+        line-height: 1.45;
+      }
+
+      .story-card li::before,
+      .feature-card li::before {
+        content: "▸";
+        color: var(--green);
+        margin-right: 0.45rem;
+      }
+
+      .flow-map {
+        display: grid;
+        grid-template-columns: 1fr 1.1fr 1fr;
+        gap: clamp(0.55rem, 1.2vw, 1rem);
+        align-items: stretch;
+      }
+
+      .flow-column {
+        display: grid;
+        gap: 0.55rem;
+      }
+
+      .flow-node {
+        min-height: clamp(46px, 7vh, 72px);
+        padding: 0.65rem 0.8rem;
+        border: 1px solid rgba(231, 242, 236, 0.16);
+        background: rgba(9, 16, 15, 0.72);
+        display: grid;
+        align-content: center;
+      }
+
+      .flow-node strong {
+        font-size: clamp(0.78rem, 1.1vw, 1rem);
+      }
+
+      .flow-node span {
+        color: var(--text-secondary);
+        font-size: clamp(0.64rem, 0.85vw, 0.82rem);
+      }
+
+      .flow-node.hot {
+        border-color: rgba(216, 95, 82, 0.5);
+        background: rgba(216, 95, 82, 0.12);
+      }
+
+      .flow-node.green {
+        border-color: rgba(147, 216, 163, 0.5);
+        background: rgba(147, 216, 163, 0.12);
+      }
+
+      .ending-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: clamp(0.55rem, 1.2vw, 0.9rem);
+      }
+
+      .ending-card {
+        min-height: min(34vh, 270px);
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        gap: 0.55rem;
+        overflow: hidden;
+      }
+
+      .ending-card img {
+        width: 100%;
+        height: clamp(74px, 14vh, 130px);
+        max-height: none;
+        object-fit: cover;
+        border: 1px solid rgba(231, 242, 236, 0.12);
+        filter: saturate(0.9) contrast(1.05);
+      }
+
+      .ending-card .num {
+        color: var(--amber);
+        font-family: var(--font-mono);
+        font-size: var(--small-size);
+      }
+
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: clamp(0.65rem, 1.4vw, 1rem);
+      }
+
+      .feature-card {
+        min-height: clamp(120px, 22vh, 190px);
+        display: grid;
+        gap: 0.6rem;
+        align-content: start;
+      }
+
+      .matrix {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.7rem;
+      }
+
+      .matrix-card {
+        min-height: clamp(118px, 20vh, 190px);
+        padding: 0.85rem;
+        border: 1px solid rgba(231, 242, 236, 0.14);
+        background: rgba(231, 242, 236, 0.05);
+        display: grid;
+        align-content: start;
+        gap: 0.35rem;
+      }
+
+      .matrix-card .mark {
+        width: 34px;
+        height: 34px;
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(118, 214, 216, 0.5);
+        color: var(--cyan);
+        font-family: var(--font-mono);
+        font-weight: 700;
+      }
+
+      .matrix-card h3 {
+        font-size: clamp(0.9rem, 1.3vw, 1.15rem);
+      }
+
+      .matrix-card p {
+        font-size: clamp(0.68rem, 0.9vw, 0.86rem);
+        line-height: 1.48;
+      }
+
+      .chapter-strip {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 0.55rem;
+      }
+
+      .chapter {
+        min-height: clamp(98px, 18vh, 160px);
+        padding: 0.75rem;
+        border: 1px solid rgba(231, 242, 236, 0.14);
+        background: linear-gradient(180deg, rgba(231, 242, 236, 0.07), rgba(231, 242, 236, 0.025));
+        display: grid;
+        align-content: space-between;
+      }
+
+      .chapter span {
+        color: var(--green);
+        font-family: var(--font-mono);
+        font-size: clamp(0.65rem, 0.8vw, 0.78rem);
+      }
+
+      .chapter strong {
+        font-size: clamp(0.8rem, 1.05vw, 1rem);
+      }
+
+      .chapter p {
+        font-size: clamp(0.62rem, 0.82vw, 0.76rem);
+        line-height: 1.42;
+      }
+
+      /* ===========================================
+         SLIDE SPECIFIC
+         =========================================== */
+      .cover {
+        background:
+          linear-gradient(90deg, rgba(7, 16, 15, 0.94), rgba(7, 16, 15, 0.54), rgba(7, 16, 15, 0.9)),
+          url("assets/backgrounds/BG_00_home_key_visual.png") center / cover;
+      }
+
+      .cover .slide-content {
+        justify-content: space-between;
+      }
+
+      .cover-title {
+        display: grid;
+        gap: 1rem;
+        max-width: 980px;
+      }
+
+      .cover-title h1 {
+        max-width: 880px;
+      }
+
+      .cover-title p {
+        max-width: 680px;
+      }
+
+      .cover-footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        align-items: end;
+      }
+
+      .cover-badge {
+        width: min(46vw, 520px);
+        padding: 1rem;
+        border: 1px solid rgba(147, 216, 163, 0.35);
+        background: rgba(7, 16, 15, 0.72);
+      }
+
+      .big-quote {
+        max-width: 960px;
+        font-family: var(--font-display);
+        font-size: clamp(1.25rem, 3.2vw, 3rem);
+        line-height: 1.28;
+        color: var(--text-primary);
+      }
+
+      .quote-source {
+        color: var(--amber);
+        font-family: var(--font-mono);
+      }
+
+      .cast-lineup {
+        position: relative;
+        height: min(64vh, 620px);
+        overflow: hidden;
+      }
+
+      .cast-lineup img {
+        position: absolute;
+        bottom: 0;
+        max-height: none;
+        height: 74%;
+        object-fit: contain;
+        filter: drop-shadow(0 24px 34px rgba(0, 0, 0, 0.6));
+      }
+
+      .cast-lineup img:nth-child(1) {
+        left: 1%;
+      }
+
+      .cast-lineup img:nth-child(2) {
+        left: 20%;
+        height: 82%;
+      }
+
+      .cast-lineup img:nth-child(3) {
+        left: 42%;
+        height: 76%;
+      }
+
+      .cast-lineup img:nth-child(4) {
+        left: 58%;
+        height: 74%;
+      }
+
+      .cast-lineup img:nth-child(5) {
+        right: 0;
+        height: 83%;
+      }
+
+      .logic-slide {
+        background:
+          radial-gradient(circle at 76% 30%, rgba(216, 95, 82, 0.17), rgba(216, 95, 82, 0) 27%),
+          linear-gradient(135deg, #07100f, #101918 58%, #15100e);
+      }
+
+      .closing {
+        background:
+          linear-gradient(0deg, rgba(7, 16, 15, 0.82), rgba(7, 16, 15, 0.92)),
+          url("assets/backgrounds/BG_12_rescue_rendezvous.png") center / cover;
+      }
+
+      /* ===========================================
+         RESPONSIVE
+         =========================================== */
+      @media (max-width: 980px) {
+        .two-col,
+        .split-tight {
+          grid-template-columns: 1fr;
+        }
+
+        .image-stack,
+        .cast-lineup {
+          display: none;
+        }
+
+        .stat-row,
+        .matrix,
+        .ending-grid,
+        .feature-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .story-grid,
+        .flow-map,
+        .chapter-strip {
+          grid-template-columns: 1fr;
+        }
+
+        .chapter:nth-child(n + 4),
+        .ending-card p {
+          display: none;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .stat-row,
+        .matrix,
+        .ending-grid,
+        .feature-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .cover-footer,
+        .tag-list {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="compositionRoot"
+      data-composition-id="micropore-game-intro"
+      data-start="0"
+      data-duration="1"
+      data-track-index="0"
+      data-width="1920"
+      data-height="1080"
+    >
+      <div class="progress-bar" id="progressBar"></div>
+      <nav class="nav-dots" id="navDots" aria-label="幻灯片导航"></nav>
+      <div class="keyboard-hint">↑ ↓ / Space 翻页</div>
+
+      <main>
+      <!-- Slide 1 -->
+      <section class="slide cover">
+        <div class="slide-content">
+          <div class="cover-title">
+            <p class="eyebrow reveal">Game Story Demo</p>
+            <h1 class="reveal delay-1">微孔：疫苗坠落</h1>
+            <p class="lead reveal delay-2">
+              一款关于“无效疫苗也必须被护送”的末世悬疑互动视觉小说。玩家不是寻找标准答案，而是在信息不完整、信任崩塌和感染逼近中承担判断后果。
+            </p>
+          </div>
+          <div class="cover-footer reveal delay-3">
+            <div class="cover-badge">
+              <p class="eyebrow">Demo Focus</p>
+              <p>游戏特点 / 剧情设计 / 多故事线 / 8 个结局</p>
+            </div>
+            <div class="tag-list">
+              <span class="tag">互动叙事</span>
+              <span class="tag">生存悬疑</span>
+              <span class="tag">路线变量</span>
+              <span class="tag">多结局</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Slide 2 -->
+      <section class="slide">
+        <div class="slide-content two-col">
+          <div class="section-copy">
+            <p class="eyebrow reveal">One Sentence Pitch</p>
+            <p class="big-quote reveal delay-1">
+              灰隼临死前说，疫苗无效。沈砚小队仍必须把它带回安全区。
+            </p>
+            <p class="quote-source reveal delay-2">核心张力：希望可能是假的，但放弃希望一定是真的。</p>
+          </div>
+          <div class="stat-row reveal-scale delay-2">
+            <div class="stat"><b>40</b><span>剧情节点</span></div>
+            <div class="stat"><b>3</b><span>主故事线</span></div>
+            <div class="stat"><b>8</b><span>终局路线</span></div>
+            <div class="stat"><b>15</b><span>线索收集</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Slide 3 -->
+      <section class="slide">
+        <div class="slide-content">
+          <div class="section-copy">
+            <p class="eyebrow reveal">Game Features</p>
+            <h2 class="reveal delay-1">游戏特点：不是“选对”，而是“承担”</h2>
+          </div>
+          <div class="feature-grid reveal delay-2">
+            <article class="feature-card">
+              <h3>剧情变量驱动</h3>
+              <p>疫苗持有人、阿拓是否救过许燃、音爆弹是否修好、沈砚感染状态共同决定后续路线。</p>
+            </article>
+            <article class="feature-card">
+              <h3>角色关系反噬</h3>
+              <p>一次救命可能改变卧底开枪的瞬间；一次分组决定后面谁有机会夺箱。</p>
+            </article>
+            <article class="feature-card">
+              <h3>线索不是装饰</h3>
+              <p>灰隼信号、记录仪、通讯器、白鸮暴露都在为最后的信任崩塌铺路。</p>
+            </article>
+            <article class="feature-card">
+              <h3>道具影响终局</h3>
+              <p>音爆弹不是单纯武器，而是改变逃亡方向、救援结果和生死代价的路线开关。</p>
+            </article>
+            <article class="feature-card">
+              <h3>结局去重</h3>
+              <p>不同路径可能抵达同一主题结局，叙事关注的是代价类型，而不是机械数量堆叠。</p>
+            </article>
+            <article class="feature-card">
+              <h3>电影式过渡</h3>
+              <p>黑底旁白、角色登场、对峙画面和结局图组成演示化、可传播的视觉节奏。</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Slide 4 -->
+      <section class="slide">
+        <div class="slide-content split-tight">
+          <div class="image-stack reveal-scale">
+            <img class="main-img" src="assets/backgrounds/BG_04_aircraft_wreckage.png" alt="坠机残骸" />
+            <img class="top-img" src="assets/backgrounds/BG_07_safezone_monitoring_room.png" alt="安全区监控室" />
+            <img class="side-img" src="assets/backgrounds/BG_10_nest_cold_box.png" alt="巢穴冷箱" />
+            <div class="caption-ribbon">从安全区监控室到坠机残骸，再到巢穴冷箱，故事不断把“任务目标”变成“伦理问题”。</div>
+          </div>
+          <div class="section-copy">
+            <p class="eyebrow reveal">World & Premise</p>
+            <h2 class="reveal delay-1">世界观：疫苗是物资，也是谎言的容器</h2>
+            <p class="lead reveal delay-2">
+              故事发生在感染后的工业区。运输机坠毁，安全区派出沈砚小队回收疫苗。对抗局潜伏者灰隼留下“疫苗无效”的死亡讯息，迫使玩家在任务命令、现场线索和人物信任之间做判断。
+            </p>
+            <div class="tag-list reveal delay-3">
+              <span class="tag">安全区</span>
+              <span class="tag">对抗局</span>
+              <span class="tag">感染者巢穴</span>
+              <span class="tag">失温疫苗</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Slide 5 -->
+      <section class="slide">
+        <div class="slide-content two-col">
+          <div class="section-copy">
+            <p class="eyebrow reveal">Character Engine</p>
+            <h2 class="reveal delay-1">人物不是陪衬，而是路线开关</h2>
+            <p class="lead reveal delay-2">
+              沈砚负责选择，林禾负责判断疫苗与异常，阿拓负责维修和救援，许燃负责通讯也负责背叛，邵戟则把隐藏冲突推到台前。每个人都对应一组可被玩家触发的后果。
+            </p>
+          </div>
+          <div class="cast-lineup reveal-scale delay-2">
+            <img src="assets/characters/CH_01_shen_yan.png" alt="沈砚" />
+            <img src="assets/characters/CH_02_lin_he.png" alt="林禾" />
+            <img src="assets/characters/CH_03_a_tuo.png" alt="阿拓" />
+            <img src="assets/characters/CH_04_xu_ran.png" alt="许燃" />
+            <img src="assets/characters/CH_07_shao_ji.png" alt="邵戟" />
+          </div>
+        </div>
+      </section>
+
+      <!-- Slide 6 -->
+      <section class="slide">
+        <div class="slide-content">
+          <div class="section-copy">
+            <p class="eyebrow reveal">Story Spine</p>
+            <h2 class="reveal delay-1">主线骨架：六段推进，一次信任坍塌</h2>
+          </div>
+          <div class="chapter-strip reveal delay-2">
+            <article class="chapter">
+              <span>序章</span>
+              <strong>灰隼信号</strong>
+              <p>“疫苗无效”成为任务阴影。</p>
+            </article>
+            <article class="chapter">
+              <span>第一章</span>
+              <strong>坠机残骸</strong>
+              <p>选择进入方式，确认现场风险。</p>
+            </article>
+            <article class="chapter">
+              <span>第二章</span>
+              <strong>机尾搜查</strong>
+              <p>决定阿拓与许燃是否同行。</p>
+            </article>
+            <article class="chapter">
+              <span>第三章</span>
+              <strong>记录仪与巢穴</strong>
+              <p>验证疫苗疑点，决定音爆弹。</p>
+            </article>
+            <article class="chapter">
+              <span>第四章</span>
+              <strong>巢穴冷箱</strong>
+              <p>疫苗到手，交给谁成为主分岔。</p>
+            </article>
+            <article class="chapter">
+              <span>第五章</span>
+              <strong>白鸮归队</strong>
+              <p>许燃暴露，对抗局突入。</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Slide 7 -->
+      <section class="slide logic-slide">
+        <div class="slide-content">
+          <div class="section-copy">
+            <p class="eyebrow reveal">Branch Logic</p>
+            <h2 class="reveal delay-1">故事线设计：四个变量撑起八个结局</h2>
+          </div>
+          <div class="matrix reveal delay-2">
+            <article class="matrix-card">
+              <div class="mark">01</div>
+              <h3>疫苗持有人</h3>
+              <p>交给林禾、阿拓或许燃，决定第五章三条主故事线。</p>
+            </article>
+            <article class="matrix-card">
+              <div class="mark">02</div>
+              <h3>救命债</h3>
+              <p>阿拓是否救过许燃，改变白鸮是否立即杀人。</p>
+            </article>
+            <article class="matrix-card">
+              <div class="mark">03</div>
+              <h3>音爆弹</h3>
+              <p>是否修好音爆弹，决定能否转移感染者群。</p>
+            </article>
+            <article class="matrix-card">
+              <div class="mark">04</div>
+              <h3>沈砚状态</h3>
+              <p>感染、死亡、异化、冷舱休眠，形成结局主题。</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Slide 8 -->
+      <section class="slide">
+        <div class="slide-content">
+          <div class="section-copy">
+            <p class="eyebrow reveal">Three Main Storylines</p>
+            <h2 class="reveal delay-1">三条主故事线：同一个疫苗箱，三种代价</h2>
+          </div>
+          <div class="story-grid reveal delay-2">
+            <article class="story-card">
+              <div>
+                <h3>林禾持疫苗</h3>
+                <p>她能识别许燃异常，避免疫苗被白鸮直接带走。</p>
+              </div>
+              <ul>
+                <li>继续缠斗会走向感染者围攻</li>
+                <li>组织撤离会转入冷舱或突围</li>
+                <li>对应结局：异化、最后一枪、黑潮、冷舱、带回问题</li>
+              </ul>
+            </article>
+            <article class="story-card">
+              <div>
+                <h3>阿拓持疫苗</h3>
+                <p>白鸮可以靠近夺箱，但是否杀阿拓取决于前面的救命债。</p>
+              </div>
+              <ul>
+                <li>救过许燃：白鸮迟疑，阿拓活下</li>
+                <li>没救过许燃：阿拓被射杀</li>
+                <li>对应结局：两枚铭牌、失去疫苗、活着的失败者</li>
+              </ul>
+            </article>
+            <article class="story-card">
+              <div>
+                <h3>许燃持疫苗</h3>
+                <p>最危险的交接，等于把任务目标交给隐藏敌方。</p>
+              </div>
+              <ul>
+                <li>白鸮归队，疫苗迅速落入对抗局</li>
+                <li>玩家只能决定是否有手段追击</li>
+                <li>对应结局：失去疫苗、活着的失败者</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Slide 9 -->
+      <section class="slide">
+        <div class="slide-content">
+          <div class="section-copy">
+            <p class="eyebrow reveal">Route Map</p>
+            <h2 class="reveal delay-1">故事路线图：先埋关系，再兑现后果</h2>
+          </div>
+          <div class="flow-map reveal delay-2">
+            <div class="flow-column">
+              <div class="flow-node green"><strong>出发</strong><span>接受回收疫苗任务</span></div>
+              <div class="flow-node"><strong>坠机残骸</strong><span>确认现场与进入路线</span></div>
+              <div class="flow-node"><strong>机尾搜查</strong><span>建立或错过救命债</span></div>
+              <div class="flow-node"><strong>记录仪</strong><span>疫苗无效疑点加深</span></div>
+            </div>
+            <div class="flow-column">
+              <div class="flow-node"><strong>巢穴冷箱</strong><span>取得疫苗，发现更大风险</span></div>
+              <div class="flow-node green"><strong>交给林禾</strong><span>防备白鸮，保住疫苗</span></div>
+              <div class="flow-node hot"><strong>交给阿拓</strong><span>触发救命债判断</span></div>
+              <div class="flow-node hot"><strong>交给许燃</strong><span>疫苗直接进入敌方风险</span></div>
+            </div>
+            <div class="flow-column">
+              <div class="flow-node hot"><strong>对抗局突入</strong><span>邵戟带队，许燃暴露</span></div>
+              <div class="flow-node"><strong>音爆弹方向</strong><span>转移感染者或突围失败</span></div>
+              <div class="flow-node"><strong>感染与冷舱</strong><span>死亡、休眠或异化</span></div>
+              <div class="flow-node green"><strong>8 个结局</strong><span>按代价类型去重</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Slide 10 -->
+      <section class="slide">
+        <div class="slide-content">
+          <div class="section-copy">
+            <p class="eyebrow reveal">Endings 1-4</p>
+            <h2 class="reveal delay-1">结局说明：希望被验证之前，先被使用</h2>
+          </div>
+          <div class="ending-grid reveal delay-2">
+            <article class="ending-card">
+              <img src="assets/endings/END_01_mutated_hope.png" alt="异化的希望" />
+              <span class="num">结局 1</span>
+              <h3>异化的希望</h3>
+              <p>沈砚给自己使用疫苗，发现疫苗无效并异化。希望被错误使用，变成第二次伤害。</p>
+            </article>
+            <article class="ending-card">
+              <img src="assets/endings/END_02_last_shot.png" alt="最后一枪" />
+              <span class="num">结局 2</span>
+              <h3>最后一枪</h3>
+              <p>沈砚选择自戕，不赌疫苗，也不让自己成为新的感染源。</p>
+            </article>
+            <article class="ending-card">
+              <img src="assets/endings/END_03_after_black_tide.png" alt="黑潮之后" />
+              <span class="num">结局 3</span>
+              <h3>黑潮之后</h3>
+              <p>无音爆弹却继续缠斗，三人死于感染者攻击，对抗局最后取走疫苗。</p>
+            </article>
+            <article class="ending-card">
+              <img src="assets/endings/END_04_captain_in_cryo.png" alt="冷舱里的队长" />
+              <span class="num">结局 4</span>
+              <h3>冷舱里的队长</h3>
+              <p>安全区拿回疫苗，沈砚被冷舱休眠带回。死亡被推迟，问题没有消失。</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Slide 11 -->
+      <section class="slide">
+        <div class="slide-content">
+          <div class="section-copy">
+            <p class="eyebrow reveal">Endings 5-8</p>
+            <h2 class="reveal delay-1">结局说明：任务失败，也可能有人活着讲述</h2>
+          </div>
+          <div class="ending-grid reveal delay-2">
+            <article class="ending-card">
+              <img src="assets/endings/END_05_bring_back_the_question.png" alt="带回问题的人" />
+              <span class="num">结局 5</span>
+              <h3>带回问题的人</h3>
+              <p>三人逃出厂区，安全区拿回疫苗。他们带回的不是答案，而是必须验证的问题。</p>
+            </article>
+            <article class="ending-card">
+              <img src="assets/endings/END_06_two_tags.png" alt="两枚铭牌" />
+              <span class="num">结局 6</span>
+              <h3>两枚铭牌</h3>
+              <p>阿拓没获得许燃迟疑，被杀；沈砚死亡，林禾带回两枚铭牌。</p>
+            </article>
+            <article class="ending-card">
+              <img src="assets/endings/END_07_lost_vaccine_saved_shenyan.png" alt="失去疫苗，留下沈砚" />
+              <span class="num">结局 7</span>
+              <h3>失去疫苗，留下沈砚</h3>
+              <p>对抗局带走疫苗，沈砚感染后进入冷舱。任务失败，但死亡被暂时推迟。</p>
+            </article>
+            <article class="ending-card">
+              <img src="assets/endings/END_08_living_failures.png" alt="活着的失败者" />
+              <span class="num">结局 8</span>
+              <h3>活着的失败者</h3>
+              <p>三人逃出厂区，却没拿回疫苗。活着回来，不等于完成任务。</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Slide 12 -->
+      <section class="slide logic-slide">
+        <div class="slide-content two-col">
+          <div class="section-copy">
+            <p class="eyebrow reveal">Design Logic</p>
+            <h2 class="reveal delay-1">设计逻辑：选择不是按钮，是延迟爆炸的因果</h2>
+            <p class="lead reveal delay-2">
+              前半段的选择看似是路线效率、分组和道具判断；后半段才揭示它们真正影响的是信任、愧疚、迟疑和生还概率。这样玩家在回看时会理解：故事不是突然分叉，而是早就埋好了引线。
+            </p>
+          </div>
+          <div class="route-line reveal-left delay-2">
+            <div class="route-step"><div class="node">选择</div><p>进入方式、分组、道具、交接对象。</p></div>
+            <div class="route-step"><div class="node">关系</div><p>谁信任谁，谁欠谁一条命，谁有机会靠近疫苗箱。</p></div>
+            <div class="route-step"><div class="node">暴露</div><p>许燃归队，邵戟突入，隐藏变量集中兑现。</p></div>
+            <div class="route-step"><div class="node">代价</div><p>疫苗、生命、真相和希望不可能同时保全。</p></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Slide 13 -->
+      <section class="slide closing">
+        <div class="slide-content">
+          <div class="section-copy">
+            <p class="eyebrow reveal">Closing</p>
+            <h2 class="reveal delay-1">这个 Demo 展示的是一套可扩展的互动叙事骨架</h2>
+            <p class="lead reveal delay-2">
+              当前版本已经具备完整故事闭环：40 个剧情节点、3 条主故事线、8 个去重结局。后续可以继续扩展林禾线、许燃视角、对抗局动机，或把冷舱结局作为续作入口。
+            </p>
+            <div class="tag-list reveal delay-3">
+              <span class="tag">可演示</span>
+              <span class="tag">可扩展</span>
+              <span class="tag">可验收</span>
+              <span class="tag">可继续做成视频版</span>
+            </div>
+          </div>
+        </div>
+      </section>
+      </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      if (window.gsap) {
+        window.__timelines["micropore-game-intro"] = gsap.timeline({ paused: true });
+      } else {
+        const fallbackTimeline = {
+          totalDuration: () => 1,
+          duration: () => 1,
+          time: () => fallbackTimeline,
+          progress: () => fallbackTimeline,
+          pause: () => fallbackTimeline,
+        };
+        window.__timelines["micropore-game-intro"] = fallbackTimeline;
+      }
+
+      /* ===========================================
+         SLIDE PRESENTATION CONTROLLER
+         =========================================== */
+      class SlidePresentation {
+        constructor() {
+          this.slides = Array.from(document.querySelectorAll(".slide"));
+          this.currentSlide = 0;
+          this.progressBar = document.getElementById("progressBar");
+          this.navDots = document.getElementById("navDots");
+          this.isWheelLocked = false;
+          this.touchStartY = 0;
+          this.setupNavDots();
+          this.setupIntersectionObserver();
+          this.setupKeyboardNav();
+          this.setupWheelNav();
+          this.setupTouchNav();
+          this.goToSlide(0, false);
+        }
+
+        setupNavDots() {
+          this.slides.forEach((_, index) => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.setAttribute("aria-label", `跳转到第 ${index + 1} 页`);
+            button.addEventListener("click", () => this.goToSlide(index));
+            this.navDots.appendChild(button);
+          });
+          this.updateNav();
+        }
+
+        setupIntersectionObserver() {
+          const observer = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  entry.target.classList.add("visible");
+                  this.currentSlide = this.slides.indexOf(entry.target);
+                  this.updateNav();
+                }
+              });
+            },
+            { threshold: 0.58 },
+          );
+          this.slides.forEach((slide) => observer.observe(slide));
+        }
+
+        setupKeyboardNav() {
+          window.addEventListener("keydown", (event) => {
+            if (["ArrowDown", "PageDown", " "].includes(event.key)) {
+              event.preventDefault();
+              this.goToSlide(this.currentSlide + 1);
+            }
+            if (["ArrowUp", "PageUp"].includes(event.key)) {
+              event.preventDefault();
+              this.goToSlide(this.currentSlide - 1);
+            }
+            if (event.key === "Home") {
+              event.preventDefault();
+              this.goToSlide(0);
+            }
+            if (event.key === "End") {
+              event.preventDefault();
+              this.goToSlide(this.slides.length - 1);
+            }
+          });
+        }
+
+        setupWheelNav() {
+          window.addEventListener(
+            "wheel",
+            (event) => {
+              if (Math.abs(event.deltaY) < 18 || this.isWheelLocked) return;
+              this.isWheelLocked = true;
+              this.goToSlide(this.currentSlide + (event.deltaY > 0 ? 1 : -1));
+              window.setTimeout(() => {
+                this.isWheelLocked = false;
+              }, 650);
+            },
+            { passive: true },
+          );
+        }
+
+        setupTouchNav() {
+          window.addEventListener(
+            "touchstart",
+            (event) => {
+              this.touchStartY = event.touches[0].clientY;
+            },
+            { passive: true },
+          );
+          window.addEventListener(
+            "touchend",
+            (event) => {
+              const delta = this.touchStartY - event.changedTouches[0].clientY;
+              if (Math.abs(delta) > 44) {
+                this.goToSlide(this.currentSlide + (delta > 0 ? 1 : -1));
+              }
+            },
+            { passive: true },
+          );
+        }
+
+        goToSlide(index, smooth = true) {
+          const nextIndex = Math.max(0, Math.min(index, this.slides.length - 1));
+          this.currentSlide = nextIndex;
+          this.slides[nextIndex].scrollIntoView({
+            behavior: smooth ? "smooth" : "auto",
+            block: "start",
+          });
+          this.updateNav();
+        }
+
+        updateNav() {
+          const dots = Array.from(this.navDots.querySelectorAll("button"));
+          dots.forEach((dot, index) => {
+            dot.classList.toggle("active", index === this.currentSlide);
+          });
+          const progress = ((this.currentSlide + 1) / this.slides.length) * 100;
+          this.progressBar.style.width = `${progress}%`;
+        }
+      }
+
+      new SlidePresentation();
+    </script>
+  </body>
+</html>
