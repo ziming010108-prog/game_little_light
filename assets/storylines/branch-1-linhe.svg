@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <style>
+      .bg { fill: #07100f; }
+      .grid { stroke: rgba(118,214,216,.13); stroke-width: 1; }
+      .panel { fill: rgba(10,24,23,.92); stroke: #76d6d8; stroke-width: 2; rx: 18; }
+      .start { fill: rgba(12,42,42,.96); stroke: #76d6d8; stroke-width: 3; rx: 18; }
+      .decision { fill: rgba(39,33,9,.95); stroke: #d7a35d; stroke-width: 3; }
+      .choice { fill: rgba(18,45,27,.96); stroke: #93d8a3; stroke-width: 3; rx: 16; }
+      .danger { fill: rgba(55,18,17,.96); stroke: #d85f52; stroke-width: 3; rx: 16; }
+      .ending-blue { fill: rgba(12,32,48,.98); stroke: #70b7ff; stroke-width: 3; rx: 16; }
+      .ending-green { fill: rgba(14,45,28,.98); stroke: #93d8a3; stroke-width: 3; rx: 16; }
+      .ending-red { fill: rgba(54,18,18,.98); stroke: #d85f52; stroke-width: 3; rx: 16; }
+      .ending-purple { fill: rgba(36,22,52,.98); stroke: #b785ff; stroke-width: 3; rx: 16; }
+      .title { fill: #f2fbf8; font: 700 54px "PingFang SC", "Noto Sans CJK SC", sans-serif; }
+      .subtitle { fill: #93d8a3; font: 500 26px "PingFang SC", "Noto Sans CJK SC", sans-serif; }
+      .label { fill: #e7f2ec; font: 600 25px "PingFang SC", "Noto Sans CJK SC", sans-serif; }
+      .small { fill: #b9cbc5; font: 500 19px "PingFang SC", "Noto Sans CJK SC", sans-serif; }
+      .tiny { fill: #93a8a2; font: 500 16px "PingFang SC", "Noto Sans CJK SC", sans-serif; }
+      .edge { stroke: #93d8a3; stroke-width: 4; fill: none; marker-end: url(#arrow); }
+      .edge2 { stroke: #d7a35d; stroke-width: 4; fill: none; marker-end: url(#arrow2); }
+      .edge3 { stroke: #d85f52; stroke-width: 4; fill: none; marker-end: url(#arrow3); }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#93d8a3"/>
+    </marker>
+    <marker id="arrow2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#d7a35d"/>
+    </marker>
+    <marker id="arrow3" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#d85f52"/>
+    </marker>
+  </defs>
+  <rect class="bg" width="1600" height="900"/>
+  <g opacity=".75">
+    <path class="grid" d="M0 80H1600M0 160H1600M0 240H1600M0 320H1600M0 400H1600M0 480H1600M0 560H1600M0 640H1600M0 720H1600M0 800H1600"/>
+    <path class="grid" d="M80 0V900M160 0V900M240 0V900M320 0V900M400 0V900M480 0V900M560 0V900M640 0V900M720 0V900M800 0V900M880 0V900M960 0V900M1040 0V900M1120 0V900M1200 0V900M1280 0V900M1360 0V900M1440 0V900M1520 0V900"/>
+  </g>
+  <text x="70" y="86" class="title">分歧1：疫苗给林禾</text>
+  <text x="72" y="126" class="subtitle">林禾防备成功｜疫苗仍在小队手中｜根据沈砚策略与音爆弹走向 E01-E05</text>
+  <rect x="1120" y="54" width="405" height="150" class="panel"/>
+  <text x="1150" y="95" class="label">关键变量</text>
+  <text x="1150" y="128" class="small">has_sonic_bomb｜沈砚策略</text>
+  <text x="1150" y="158" class="small">沈砚感染状态｜疫苗是否带回安全区</text>
+  <rect x="600" y="170" width="400" height="84" class="start"/>
+  <text x="690" y="204" class="label">P14_1 白鸮暴露</text>
+  <text x="654" y="235" class="small">林禾防备成功，疫苗仍在林禾手中</text>
+  <path class="edge2" d="M800 254V305"/>
+  <polygon points="800,305 960,375 800,445 640,375" class="decision"/>
+  <text x="735" y="368" class="label">沈砚策略</text>
+  <text x="703" y="398" class="small">缠斗 or 撤离</text>
+  <path class="edge" d="M640 375H360V440"/>
+  <path class="edge" d="M960 375H1240V440"/>
+  <rect x="190" y="440" width="340" height="74" class="choice"/>
+  <text x="256" y="486" class="label">继续与对抗局缠斗</text>
+  <rect x="1070" y="440" width="340" height="74" class="choice"/>
+  <text x="1150" y="486" class="label">带着疫苗组织撤离</text>
+  <path class="edge" d="M360 514V560"/>
+  <path class="edge" d="M1240 514V560"/>
+  <polygon points="360,560 490,615 360,670 230,615" class="decision"/>
+  <text x="295" y="609" class="label">是否有音爆弹</text>
+  <polygon points="1240,560 1370,615 1240,670 1110,615" class="decision"/>
+  <text x="1175" y="609" class="label">是否有音爆弹</text>
+  <path class="edge" d="M300 655V710"/>
+  <path class="edge3" d="M430 655V710"/>
+  <path class="edge" d="M1160 655V710"/>
+  <path class="edge3" d="M1320 655V710"/>
+  <rect x="95" y="710" width="220" height="72" class="choice"/>
+  <text x="142" y="742" class="small">有音爆弹</text>
+  <text x="124" y="770" class="small">沈砚感染后选择</text>
+  <rect x="365" y="710" width="220" height="72" class="danger"/>
+  <text x="418" y="742" class="small">无音爆弹</text>
+  <text x="418" y="770" class="small">黑潮压上</text>
+  <rect x="985" y="710" width="300" height="72" class="choice"/>
+  <text x="1045" y="742" class="small">有音爆弹</text>
+  <text x="1020" y="770" class="small">选择投掷方向</text>
+  <rect x="1325" y="710" width="210" height="72" class="danger"/>
+  <text x="1375" y="742" class="small">无音爆弹</text>
+  <text x="1353" y="770" class="small">感染后选择</text>
+  <path class="edge" d="M150 782V820"/>
+  <path class="edge3" d="M260 782V820"/>
+  <path class="edge3" d="M475 782V820"/>
+  <path class="edge2" d="M1055 782V820"/>
+  <path class="edge" d="M1210 782V820"/>
+  <path class="edge2" d="M1380 782V820"/>
+  <path class="edge3" d="M1490 782V820"/>
+  <rect x="55" y="820" width="150" height="60" class="ending-green"/>
+  <text x="96" y="846" class="label">E01</text><text x="72" y="872" class="tiny">异化的希望</text>
+  <rect x="220" y="820" width="150" height="60" class="ending-red"/>
+  <text x="262" y="846" class="label">E02</text><text x="246" y="872" class="tiny">最后一枪</text>
+  <rect x="400" y="820" width="150" height="60" class="ending-blue"/>
+  <text x="442" y="846" class="label">E03</text><text x="426" y="872" class="tiny">黑潮之后</text>
+  <rect x="985" y="820" width="150" height="60" class="ending-blue"/>
+  <text x="1026" y="846" class="label">E04</text><text x="1006" y="872" class="tiny">冷舱里的队长</text>
+  <rect x="1158" y="820" width="150" height="60" class="ending-purple"/>
+  <text x="1200" y="846" class="label">E05</text><text x="1179" y="872" class="tiny">带回问题的人</text>
+  <rect x="1332" y="820" width="150" height="60" class="ending-blue"/>
+  <text x="1374" y="846" class="label">E04</text><text x="1353" y="872" class="tiny">冷舱里的队长</text>
+  <rect x="1496" y="820" width="90" height="60" class="ending-red"/>
+  <text x="1514" y="846" class="label">E02</text><text x="1510" y="872" class="tiny">最后一枪</text>
+</svg>
